@@ -70,10 +70,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *            `----------------------------------'           '------''---------------------------'
  */
 [_LOWER] = LAYOUT(
-    _______, _______, _______, _______, _______,  _______,                         _______, _______,   _______, _______,   _______,  _______,
-    _______, KC_INS,  KC_PSCR, KC_APP,  XXXXXXX,  XXXXXXX,                         KC_PGUP, KC_PRVWD,  KC_UP,   KC_NXTWD,  KC_DLINE, KC_BSPC,
-    _______, KC_LALT, KC_LCTL, KC_LSFT, XXXXXXX,  KC_CAPS,                         KC_PGDN, KC_LEFT,   KC_DOWN, KC_RGHT,   KC_DEL,   KC_BSPC,
-    _______, KC_UNDO, KC_CUT,  KC_COPY, KC_PASTE, XXXXXXX, _______,       _______, XXXXXXX, KC_LSTRT,  XXXXXXX, KC_LEND,   XXXXXXX,  _______,
+    _______, _______, _______, _______, _______,  _______,                         _______,  _______,   _______, _______,   _______,  _______,
+    _______, KC_INS,  KC_PSCR, KC_APP,  XXXXXXX,  XXXXXXX,                         KC_PGUP,  KC_PRVWD,  KC_UP,   KC_NXTWD,  KC_DLINE, KC_BSPC,
+    _______, KC_LALT, KC_LCTL, KC_LSFT, KC_DEL,   KC_CAPS,                         KC_LEFT,  KC_DOWN,   KC_UP,   KC_RGHT,   KC_DEL,   KC_BSPC,
+    _______, KC_UNDO, KC_CUT,  KC_COPY, KC_PASTE, XXXXXXX, _______,       _______, KC_PGDN,  KC_LSTRT,  XXXXXXX, KC_LEND,   XXXXXXX,  _______,
                       _______, _______, _______,  _______, _______,       _______, _______,  _______,   _______, _______
 ),
 /* RAISE
@@ -115,7 +115,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
     QK_BOOT, RGB_SPI, RGB_VAI, RGB_SAI, RGB_HUI, RGB_MODE_FORWARD,                       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
     XXXXXXX, RGB_SPD, RGB_VAD, RGB_SAD, RGB_HUD, RGB_MODE_REVERSE,                       XXXXXXX, KC_VOLD, KC_MUTE, KC_VOLU, XXXXXXX, XXXXXXX,
-    CG_TOGG, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_MPRV, KC_MPLY, KC_MNXT, XXXXXXX, XXXXXXX,
+    AG_TOGG, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_MPRV, KC_MPLY, KC_MNXT, XXXXXXX, XXXXXXX,
                       _______, _______, _______, _______, _______,     _______, _______, _______, _______, _______
 )
 };
@@ -124,16 +124,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case KC_PRVWD:
             if (record->event.pressed) {
-                if (keymap_config.swap_lctl_lgui) {
-                    register_mods(mod_config(MOD_LALT));
+                if (keymap_config.swap_lalt_lgui) {
+                    register_mods(mod_config(MOD_LGUI)); // due to swap, actually ALT
                     register_code(KC_LEFT);
                 } else {
                     register_mods(mod_config(MOD_LCTL));
                     register_code(KC_LEFT);
                 }
             } else {
-                if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_LALT));
+                if (keymap_config.swap_lalt_lgui) {
+                    unregister_mods(mod_config(MOD_LGUI)); // due to swap, actually ALT
                     unregister_code(KC_LEFT);
                 } else {
                     unregister_mods(mod_config(MOD_LCTL));
@@ -143,16 +143,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case KC_NXTWD:
              if (record->event.pressed) {
-                if (keymap_config.swap_lctl_lgui) {
-                    register_mods(mod_config(MOD_LALT));
+                if (keymap_config.swap_lalt_lgui) {
+                    register_mods(mod_config(MOD_LGUI)); // due to swap, actually ALT
                     register_code(KC_RIGHT);
                 } else {
                     register_mods(mod_config(MOD_LCTL));
                     register_code(KC_RIGHT);
                 }
             } else {
-                if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_LALT));
+                if (keymap_config.swap_lalt_lgui) {
+                    unregister_mods(mod_config(MOD_LGUI)); // due to swap, actually ALT
                     unregister_code(KC_RIGHT);
                 } else {
                     unregister_mods(mod_config(MOD_LCTL));
@@ -162,16 +162,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case KC_LSTRT:
             if (record->event.pressed) {
-                if (keymap_config.swap_lctl_lgui) {
-                     // CMD-arrow on Mac, but we have CTL and GUI swapped
-                    register_mods(mod_config(MOD_LCTL));
+                if (keymap_config.swap_lalt_lgui) {
+                    register_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
                     register_code(KC_LEFT);
                 } else {
                     register_code(KC_HOME);
                 }
             } else {
-                if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_LCTL));
+                if (keymap_config.swap_lalt_lgui) {
+                    unregister_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
                     unregister_code(KC_LEFT);
                 } else {
                     unregister_code(KC_HOME);
@@ -180,16 +179,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case KC_LEND:
             if (record->event.pressed) {
-                if (keymap_config.swap_lctl_lgui) {
-                    // CMD-arrow on Mac, but we have CTL and GUI swapped
-                    register_mods(mod_config(MOD_LCTL));
+                if (keymap_config.swap_lalt_lgui) {
+                    register_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
                     register_code(KC_RIGHT);
                 } else {
                     register_code(KC_END);
                 }
             } else {
-                if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_LCTL));
+                if (keymap_config.swap_lalt_lgui) {
+                    unregister_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
                     unregister_code(KC_RIGHT);
                 } else {
                     unregister_code(KC_END);
@@ -207,42 +205,69 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case KC_COPY:
             if (record->event.pressed) {
-                // CMD-c on Mac, but we have CTL and GUI swapped
-                register_mods(mod_config(MOD_LCTL));
+                if (keymap_config.swap_lalt_lgui) {
+                    register_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
+                } else {
+                    register_mods(mod_config(MOD_LCTL));
+                }
                 register_code(KC_C);
             } else {
-                unregister_mods(mod_config(MOD_LCTL));
+                if (keymap_config.swap_lalt_lgui) {
+                    unregister_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
+                } else {
+                    unregister_mods(mod_config(MOD_LCTL));
+                }
                 unregister_code(KC_C);
             }
             return false;
         case KC_PASTE:
             if (record->event.pressed) {
-                // CMD-v on Mac, but we have CTL and GUI swapped
-                register_mods(mod_config(MOD_LCTL));
+                if (keymap_config.swap_lalt_lgui) {
+                    register_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
+                } else {
+                    register_mods(mod_config(MOD_LCTL));
+                }
                 register_code(KC_V);
             } else {
-                unregister_mods(mod_config(MOD_LCTL));
+                if (keymap_config.swap_lalt_lgui) {
+                    unregister_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
+                } else {
+                    unregister_mods(mod_config(MOD_LCTL));
+                }
                 unregister_code(KC_V);
             }
             return false;
         case KC_CUT:
             if (record->event.pressed) {
-                // CMD-x on Mac, but we have CTL and GUI swapped
-                register_mods(mod_config(MOD_LCTL));
+                if (keymap_config.swap_lalt_lgui) {
+                    register_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
+                } else {
+                    register_mods(mod_config(MOD_LCTL));
+                }
                 register_code(KC_X);
             } else {
-                unregister_mods(mod_config(MOD_LCTL));
+                if (keymap_config.swap_lalt_lgui) {
+                    unregister_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
+                } else {
+                    unregister_mods(mod_config(MOD_LCTL));
+                }
                 unregister_code(KC_X);
             }
             return false;
-            return false;
         case KC_UNDO:
             if (record->event.pressed) {
-                // CMD-z on Mac, but we have CTL and GUI swapped
-                register_mods(mod_config(MOD_LCTL));
+                if (keymap_config.swap_lalt_lgui) {
+                    register_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
+                } else {
+                    register_mods(mod_config(MOD_LCTL));
+                }
                 register_code(KC_Z);
             } else {
-                unregister_mods(mod_config(MOD_LCTL));
+                if (keymap_config.swap_lalt_lgui) {
+                    unregister_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
+                } else {
+                    unregister_mods(mod_config(MOD_LCTL));
+                }
                 unregister_code(KC_Z);
             }
             return false;
@@ -278,14 +303,14 @@ void write_int_ln(const char* prefix, uint8_t value) {
 }
 
 static void print_status_narrow(void) {
-    oled_write_ln_P(PSTR("SofleChoc _____"), false);
+    oled_write_ln_P(PSTR("Ethan's KB"), false);
 
     if (get_highest_layer(layer_state) == _ADJUST) {
         uint8_t mode  = rgb_matrix_get_mode();
         HSV     hsv   = rgb_matrix_get_hsv();
         uint8_t speed = rgb_matrix_get_speed();
 
-        if (keymap_config.swap_lctl_lgui) {
+        if (keymap_config.swap_lalt_lgui) {
             oled_write_ln_P(PSTR("MAC\n"), false);
         } else {
             oled_write_ln_P(PSTR("WIN\n"), false);
