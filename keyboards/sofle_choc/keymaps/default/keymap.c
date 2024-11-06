@@ -27,8 +27,11 @@ enum custom_keycodes {
     KC_NXTWD,
     KC_LSTRT,
     KC_LEND,
-    KC_DLINE
+    KC_DLINE,
+    KC_QUIT,
+    KC_SALL // select all
 };
+// other ideas. delete previous word, delete next word
 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -71,8 +74,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_LOWER] = LAYOUT(
     _______, _______, _______, _______, _______,  _______,                         _______,  _______,   _______, _______,   _______,  _______,
-    _______, KC_INS,  KC_PSCR, KC_APP,  XXXXXXX,  XXXXXXX,                         KC_PGUP,  KC_PRVWD,  KC_UP,   KC_NXTWD,  KC_DLINE, KC_BSPC,
-    _______, KC_LALT, KC_LCTL, KC_LSFT, KC_DEL,   KC_CAPS,                         KC_LEFT,  KC_DOWN,   KC_UP,   KC_RGHT,   KC_DEL,   KC_BSPC,
+    _______, KC_QUIT, KC_PSCR, KC_APP,  XXXXXXX,  XXXXXXX,                         KC_PGUP,  KC_PRVWD,  KC_UP,   KC_NXTWD,  KC_DLINE, KC_BSPC,
+    _______, KC_SALL, _______, KC_DEL,  _______,  KC_CAPS,                         KC_LEFT,  KC_DOWN,   KC_UP,   KC_RGHT,   KC_DEL,   KC_BSPC,
     _______, KC_UNDO, KC_CUT,  KC_COPY, KC_PASTE, XXXXXXX, _______,       _______, KC_PGDN,  KC_LSTRT,  XXXXXXX, KC_LEND,   XXXXXXX,  _______,
                       _______, _______, _______,  _______, _______,       _______, _______,  _______,   _______, _______
 ),
@@ -196,11 +199,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case KC_DLINE:
             if (record->event.pressed) {
-                register_mods(mod_config(MOD_LCTL));
-                register_code(KC_BSPC);
+                if (keymap_config.swap_lalt_lgui) {
+                    register_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
+                    register_code(KC_BSPC);
+                }
             } else {
-                unregister_mods(mod_config(MOD_LCTL));
-                unregister_code(KC_BSPC);
+                if (keymap_config.swap_lalt_lgui) {
+                    unregister_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
+                    unregister_code(KC_BSPC);
+                }
             }
             return false;
         case KC_COPY:
@@ -269,6 +276,42 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     unregister_mods(mod_config(MOD_LCTL));
                 }
                 unregister_code(KC_Z);
+            }
+            return false;
+        case KC_QUIT:
+            if (record->event.pressed) {
+                if (keymap_config.swap_lalt_lgui) {
+                    register_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
+                    register_code(KC_Q);
+                } else {
+                    register_mods(mod_config(MOD_LALT));
+                    register_code(KC_F4);
+                }
+            } else {
+                if (keymap_config.swap_lalt_lgui) {
+                    unregister_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
+                    unregister_code(KC_Q);
+                } else {
+                    unregister_mods(mod_config(MOD_LALT));
+                    unregister_code(KC_F4);
+                }
+            }
+            return false;
+        case KC_SALL:
+            if (record->event.pressed) {
+                if (keymap_config.swap_lalt_lgui) {
+                    register_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
+                } else {
+                    register_mods(mod_config(MOD_LCTL));
+                }
+                register_code(KC_A);
+            } else {
+                if (keymap_config.swap_lalt_lgui) {
+                    unregister_mods(mod_config(MOD_LALT)); // due to swap, actually GUI
+                } else {
+                    unregister_mods(mod_config(MOD_LCTL));
+                }
+                unregister_code(KC_A);
             }
             return false;
         default:
